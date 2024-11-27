@@ -1,1 +1,3 @@
 /.env.go
+/cmd/service/.env
+/vendor/
