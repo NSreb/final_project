@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"go_final_project/internal/models"
 )
 
@@ -13,15 +14,16 @@ type Task struct {
 	Repeat  string `json:"repeat"`
 }
 
-func (r *Repository) GetTask(id models.TaskId) (*Task, error) {
-	query := "SELECT id, date, title, comment, repeat FROM scheduler WHERE id = :id"
-	row := r.db.QueryRow(query, sql.Named("id", id.Id))
+func (r *Repository) GetTask(id models.TaskId) (*models.Tasks, error) {
+	query := "SELECT ID, DATE, TITLE, COMMENT, REPEAT FROM SCHEDULER WHERE ID = :ID"
+	row := r.db.QueryRow(query, sql.Named("ID", id.Id))
 
-	var data Task
+	var data models.Tasks
+
 	err := row.Scan(&data.Id, &data.Date, &data.Title, &data.Comment, &data.Repeat)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return nil, fmt.Errorf(" Задача с указаным ID не найдена")
 		}
 		return nil, err
 	}

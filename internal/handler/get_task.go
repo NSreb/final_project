@@ -33,7 +33,7 @@ func (h *Handler) GetTask(w http.ResponseWriter, req *http.Request) {
 	result, err := h.repo.GetTask(taskId)
 
 	if err != nil {
-		http.Error(w, "Ошибка выполнения запроса", http.StatusInternalServerError)
+		helper.SendJSONError(w, "Ошибка:"+err.Error(), http.StatusBadRequest)
 		return
 	}
 

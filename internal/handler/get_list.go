@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"go_final_project/internal/helper"
 	"go_final_project/internal/repository"
 	"net/http"
 )
@@ -12,10 +13,10 @@ type Response struct {
 
 func (h *Handler) GetList(w http.ResponseWriter, req *http.Request) {
 
-	results, err := h.repo.GetList()
+	results, err := h.repo.GetList(30)
 
 	if err != nil {
-		http.Error(w, "Ошибка выполнения запроса", http.StatusInternalServerError)
+		helper.SendJSONError(w, "Ошибка выполнения запрос"+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -30,7 +31,7 @@ func (h *Handler) GetList(w http.ResponseWriter, req *http.Request) {
 
 	// Кодируем результат в JSON и отправляем его клиенту
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, "Ошибка кодирования данных в JSON", http.StatusInternalServerError)
+		helper.SendJSONError(w, "Ошибка кодирования данных в JSON", http.StatusBadRequest)
 		return
 	}
 

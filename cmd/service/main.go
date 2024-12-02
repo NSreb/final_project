@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/spf13/viper"
 	"go_final_project/internal/db"
+	"go_final_project/internal/db/migration"
 	"go_final_project/internal/handler"
 	"go_final_project/internal/repository"
 	"log"
@@ -36,10 +37,21 @@ func main() {
 		port = "7540" // Значение по умолчанию
 	}
 
-	db.New()
-	rep := repository.New(db.New())
-	migration(rep)
+	db, err := db.New()
+	if err != nil {
+		log.Fatalf("Ошибка подключения к базе данных: %v", err)
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Println("Ошибка при закрытии соединения:", err)
+		}
+	}()
 
+	rep := repository.New(db)
+
+	if err := migration.Migrate(rep); err != nil {
+		log.Fatalf("Ошибка миграции: %v", err)
+	}
 	handler := handler.New(rep)
 
 	r := chi.NewRouter()
@@ -52,37 +64,9 @@ func main() {
 	r.Post("/api/task/done", handler.DoneTask)
 	r.Delete("/api/task", handler.DeleteTask)
 
+	log.Printf("Приложение запущено на порту: %s", port)
+
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func migration(rep *repository.Repository) {
-	appPath, err := os.Executable()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dbFile := viper.GetString("TODO_DBFILE")
-
-	if dbFile == "" {
-		dbFile = "scheduler.db" // Значение по умолчанию
-	}
-
-	dbFile = filepath.Join(filepath.Dir(appPath), dbFile)
-	_, err = os.Stat(dbFile)
-
-	var install bool
-	if err != nil {
-		install = true
-	}
-
-	if install {
-		if err := rep.CreateScheduler(); err != nil {
-			log.Fatal(err)
-		} else {
-			rep.CreateIDXScheduler()
-		}
-	}
-
 }

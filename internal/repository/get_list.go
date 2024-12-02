@@ -8,9 +8,9 @@ type Data struct {
 	Repeat  string `json:"repeat"`
 }
 
-func (r *Repository) GetList() ([]Data, error) {
-	query := `select id, date, title, comment, repeat from scheduler order by date desc`
-	rows, err := r.db.Query(query)
+func (r *Repository) GetList(limit int) ([]Data, error) {
+	query := `SELECT ID, DATE, TITLE, COMMENT, REPEAT FROM SCHEDULER  ORDER BY DATE DESC LIMIT ?`
+	rows, err := r.db.Query(query, limit)
 	if err != nil {
 		return nil, err
 	}

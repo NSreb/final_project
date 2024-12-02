@@ -6,8 +6,8 @@ import (
 )
 
 func (r *Repository) DeleteTask(id int) error {
-	query := `DELETE FROM scheduler where id = :id`
-	result, err := r.db.Exec(query, sql.Named("id", id))
+	query := `DELETE FROM SCHEDULER WHERE ID = :ID`
+	result, err := r.db.Exec(query, sql.Named("ID", id))
 	if err != nil {
 		return fmt.Errorf("ошибка при выполнении запроса: %w", err)
 	}

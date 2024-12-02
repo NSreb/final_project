@@ -14,8 +14,8 @@ func (r *Repository) EditTask(task models.Tasks) error {
 	if err != nil {
 		return err
 	}
-	query := "update scheduler set date = :date, title = :title, comment =:comment, repeat = :repeat WHERE id = :id"
-	result, err := r.db.Exec(query, sql.Named("id", id), sql.Named("date", task.Date), sql.Named("title", task.Title), sql.Named("comment", task.Comment), sql.Named("repeat", task.Repeat))
+	query := "UPDATE SCHEDULER SET DATE = :DATE, TITLE = :TITLE, COMMENT =:COMMENT, REPEAT = :REPEAT WHERE ID = :ID"
+	result, err := r.db.Exec(query, sql.Named("ID", id), sql.Named("DATE", task.Date), sql.Named("TITLE", task.Title), sql.Named("COMMENT", task.Comment), sql.Named("REPEAT", task.Repeat))
 	if err != nil {
 		return fmt.Errorf("ошибка при выполнении запроса: %w", err)
 	}

@@ -7,8 +7,8 @@ import (
 
 func (r *Repository) UpdDateTask(id int, date string) error {
 
-	query := "update scheduler set date = :date WHERE id = :id"
-	result, err := r.db.Exec(query, sql.Named("id", id), sql.Named("date", date))
+	query := "UPDATE SCHEDULER SET DATE = :DATE WHERE ID = :ID"
+	result, err := r.db.Exec(query, sql.Named("ID", id), sql.Named("DATE", date))
 	if err != nil {
 		return fmt.Errorf("ошибка при выполнении запроса: %w", err)
 	}
